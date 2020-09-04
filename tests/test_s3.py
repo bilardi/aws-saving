@@ -1,19 +1,24 @@
 import unittest
 import json
 import datetime
+from botocore.exceptions import ClientError
 import tests.helper as hlp
 from aws_saving.s3 import S3
 
 class S3Client():
     lb = None
     gbt = None
+    gbteNoSuchTagSet = None
     es = False
     ne = False
+    net = False
     def __init__(self):
         with open('tests/s3-list-buckets.json') as json_file:
             self.lb = json.load(json_file)
         with open('tests/s3-get-bucket-tagging.json') as json_file:
             self.gbt = json.load(json_file)
+        with open('tests/s3-get-bucket-tagging.NoSuchTagSet.json') as json_file:
+            self.gbteNoSuchTagSet = json.load(json_file)
     def list_buckets(self):
         return self.lb
     def head_bucket(self, Bucket):
@@ -21,13 +26,17 @@ class S3Client():
             return True
         raise ValueError
     def get_bucket_tagging(self, Bucket):
-        if isinstance(Bucket, str):
+        if self.net is True:
+            raise ClientError(self.gbteNoSuchTagSet, 'GetBucketTagging')
+        elif isinstance(Bucket, str):
             return self.gbt
         raise ValueError
     def set_except_simulation(self, boolean):
         self.es = boolean
     def set_not_exists_simulation(self, boolean):
         self.ne = boolean
+    def set_not_exists_tag_simulation(self, boolean):
+        self.net = boolean
     def delete_bucket(self, Bucket):
         if isinstance(Bucket, str) and self.es is False:
             return
@@ -68,6 +77,12 @@ class TestService(unittest.TestCase, S3):
     def test_get_instances(self):
         instances = self.s.get_instances()
         self.assertEqual(instances[0]['Name'], 'bucket')
+
+    def test_get_instances_exception(self):
+        self.s.s3.set_not_exists_tag_simulation(True)
+        instances = self.s.get_instances()
+        self.s.s3.set_not_exists_tag_simulation(False)
+        self.assertEqual(instances, [])
 
     def test_already_exists(self):
         self.s.s3.set_not_exists_simulation(False)
