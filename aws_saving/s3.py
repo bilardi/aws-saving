@@ -19,7 +19,7 @@ Here's an example:
 """
 
 import boto3
-from botocore.errorfactory import ClientError
+from botocore.exceptions import ClientError
 from .service import Service
 
 class S3(Service):
@@ -37,17 +37,19 @@ class S3(Service):
         gets the s3 details
             Returns:
                 A dictionary of the s3 instances details
+            Raise:
+                ClientError of botocore.exceptions
         """
         instances_list = self.s3.list_buckets()
         instances = []
         for instance in instances_list['Buckets']:
             try:
                 tag_list = self.s3.get_bucket_tagging(Bucket=instance['Name'])
-            except ClientError as e:
-                if e.response['Error']['Code'] == 'NoSuchTagSet':
+            except ClientError as error:
+                if error.response['Error']['Code'] == 'NoSuchTagSet':
                     continue # No tags
                 else:
-                    raise e
+                    raise error
             saving = self.get_value(tag_list['TagSet'], 'saving')
             if saving and saving.lower() == 'enabled':
                 instance['DeletionProtection'] = True
