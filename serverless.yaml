@@ -22,6 +22,7 @@ provider:
         - cloudformation:*
         - ec2:*
         - lambda:*
+        - states:*
         - logs:*
         - iam:*
         - rds:*
