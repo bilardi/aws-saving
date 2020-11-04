@@ -2,6 +2,7 @@ import unittest
 import tests.helper as hlp
 import json
 import boto3
+import os
 
 class TestService(unittest.TestCase):
     lambda_client = None
@@ -12,7 +13,7 @@ class TestService(unittest.TestCase):
 
     def test_empty(self):
         output = self.lambda_client.invoke(
-                    FunctionName='saving-staging',
+                    FunctionName='saving-{}'.format(os.environ.get('STAGE')),
                     InvocationType='RequestResponse', #|'Event'|'DryRun',
                     Payload=json.dumps({'services_name': ["service"]})
                 )
@@ -21,7 +22,7 @@ class TestService(unittest.TestCase):
 
     def test_cloudformation(self):
         output = self.lambda_client.invoke(
-                    FunctionName='saving-staging',
+                    FunctionName='saving-{}'.format(os.environ.get('STAGE')),
                     InvocationType='RequestResponse', #|'Event'|'DryRun',
                     Payload=json.dumps({'services_name': ['cloudformation']})
                 )

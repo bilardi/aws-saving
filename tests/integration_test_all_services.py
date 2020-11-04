@@ -2,6 +2,7 @@ import unittest
 import tests.helper as hlp
 import json
 import boto3
+import os
 
 class TestService(unittest.TestCase):
     lambda_client = None
@@ -12,7 +13,7 @@ class TestService(unittest.TestCase):
 
     def test_empty(self):
         output = self.lambda_client.invoke(
-                    FunctionName='saving-staging',
+                    FunctionName='saving-{}'.format(os.environ.get('STAGE')),
                     InvocationType='RequestResponse', #|'Event'|'DryRun',
                     Payload=json.dumps({'services_name': ["service"]})
                 )
@@ -21,7 +22,7 @@ class TestService(unittest.TestCase):
 
     def delete_s3(self):
         output = self.lambda_client.invoke(
-                    FunctionName='saving-staging',
+                    FunctionName='saving-{}'.format(os.environ.get('STAGE')),
                     InvocationType='RequestResponse', #|'Event'|'DryRun',
                     Payload=json.dumps({'services_name': ['s3']})
                 )
@@ -32,18 +33,19 @@ class TestService(unittest.TestCase):
 
     def delete_ec2(self):
         output = self.lambda_client.invoke(
-                    FunctionName='saving-staging',
+                    FunctionName='saving-{}'.format(os.environ.get('STAGE')),
                     InvocationType='RequestResponse', #|'Event'|'DryRun',
                     Payload=json.dumps({'services_name': ['ec2']})
                 )
         self.assertEqual(output['StatusCode'], 200)
         # print(output['Payload'].read())
-        with self.assertRaises(KeyError):
-            self.assertEqual(output['FunctionError'], 'Unhandled')
+        # self.assertEqual(output['FunctionError'], 'Unhandled') # TODO without ec2
+        # with self.assertRaises(KeyError):
+        #     self.assertEqual(output['FunctionError'], 'Unhandled')
 
     def delete_rds(self):
         output = self.lambda_client.invoke(
-                    FunctionName='saving-staging',
+                    FunctionName='saving-{}'.format(os.environ.get('STAGE')),
                     InvocationType='RequestResponse', #|'Event'|'DryRun',
                     Payload=json.dumps({'services_name': ['rds']})
                 )
@@ -54,13 +56,13 @@ class TestService(unittest.TestCase):
 
     def delete_cloudformation(self):
         output = self.lambda_client.invoke(
-                    FunctionName='saving-staging',
+                    FunctionName='saving-{}'.format(os.environ.get('STAGE')),
                     InvocationType='RequestResponse', #|'Event'|'DryRun',
                     Payload=json.dumps({'services_name': ['cloudformation']})
                 )
         self.assertEqual(output['StatusCode'], 200)
         # print(output['Payload'].read())
-        self.assertEqual(output['FunctionError'], 'Unhandled') # see TODO in cloudformation.py
+        # self.assertEqual(output['FunctionError'], 'Unhandled') # see TODO in cloudformation.py
         # with self.assertRaises(KeyError):
         #     self.assertEqual(output['FunctionError'], 'Unhandled')
 

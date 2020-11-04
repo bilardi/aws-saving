@@ -35,6 +35,7 @@ custom:
   stage:
     production: production
     staging: staging
+    deleteme: deleteme
     default: default
   functionName:
     production: saving
