@@ -8,6 +8,11 @@ The primary features of your CI/CD are: having a **complete environment for**
 * **staging** for running unit and integration tests, to check everything before release
 * **production**
 
+If you want to use AWS CDK and AWS CodePipeline, you can see these repositories before to implement your version
+
+* `aws-simple-pipeline <https://github.com/bilardi/aws-simple-pipeline/>`_ for using a library ready
+* `aws-tool-comparison <https://github.com/bilardi/aws-tool-comparison/tree/master/cdk/python/>`_ for seeing its implementation
+
 Run tests
 #########
 

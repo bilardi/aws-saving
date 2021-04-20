@@ -1,0 +1,16 @@
+{
+    "Domains": [
+        {
+            "DomainArn": "arn",
+            "DomainId": "id",
+            "DomainName": "studio",
+            "Status": "InService"
+        },
+        {
+            "DomainArn": "arn2",
+            "DomainId": "id2",
+            "DomainName": "studio2",
+            "Status": "Deleting"
+        }
+    ]
+}

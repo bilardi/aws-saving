@@ -1,0 +1,9 @@
+{
+    "StackResourceSummaries": [
+        {
+            "PhysicalResourceId": "user|d-abcdefghijkl",
+            "ResourceType": "AWS::SageMaker::UserProfile",
+            "ResourceStatus": "CREATE_COMPLETE"
+        }
+    ]
+}

@@ -18,5 +18,5 @@ the class extended by each class that implements an AWS service.
 # license MIT
 # support https://github.com/bilardi/aws-saving/issues
 """
-__version__ = '0.0.5'
+__version__ = '0.0.6'
 __author__ = 'Alessandra Bilardi'

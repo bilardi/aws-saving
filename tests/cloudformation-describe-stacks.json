@@ -42,6 +42,34 @@
                     "Value": "Enabled"
                 }
             ]
+        },
+        {
+            "StackName": "sagemaker-domain",
+            "StackStatus": "UPDATE_COMPLETE",
+            "Tags": [
+                {
+                    "Key": "Stop",
+                    "Value": "0 18 . . ."
+                },
+                {
+                    "Key": "Saving",
+                    "Value": "Enabled"
+                }
+            ]
+        },
+        {
+            "StackName": "sagemaker-user-profile",
+            "StackStatus": "UPDATE_COMPLETE",
+            "Tags": [
+                {
+                    "Key": "Stop",
+                    "Value": "0 18 . . ."
+                },
+                {
+                    "Key": "Saving",
+                    "Value": "Enabled"
+                }
+            ]
         }
     ]
 }

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.6] - 2021-04-20
+
+### Added
+- AWS SageMaker Studio service
+
 ## [0.0.5] - 2020-09-04
 
 ### Added
@@ -39,7 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - the init files of package and tests
 - the documentation by sphinx
 
-[Unreleased]: https://github.com/bilardi/aws-saving/compare/v0.0.5...HEAD
+[Unreleased]: https://github.com/bilardi/aws-saving/compare/v0.0.6...HEAD
+[0.0.6]: https://github.com/bilardi/aws-saving/releases/tag/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/bilardi/aws-saving/releases/tag/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/bilardi/aws-saving/releases/tag/v0.0.3...v0.0.4
 [0.0.3]: https://github.com/bilardi/aws-saving/releases/tag/v0.0.2...v0.0.3

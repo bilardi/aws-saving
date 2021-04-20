@@ -1,0 +1,7 @@
+{
+    "DomainArn": "arn",
+    "DomainId": "id",
+    "DomainName": "studio",
+    "HomeEfsFileSystemId": "Retain",
+    "Status": "InService"
+}

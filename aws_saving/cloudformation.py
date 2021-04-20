@@ -22,16 +22,20 @@ import boto3
 from .service import Service
 from .s3 import S3
 from .rds import Rds
+from .sagemaker_studio import Studio
 
 class Cloudformation(Service):
     stack = None
     s3 = None
+    rds = None
+    sagemaker_studio = None
     date_tuple = None
 
     def __init__(self, event):
         self.stack = boto3.client('cloudformation')
         self.s3 = S3(event)
         self.rds = Rds(event)
+        self.sagemaker_studio = Studio(event)
         Service.__init__(self, event)
 
     def get_instances(self):
@@ -91,6 +95,34 @@ class Cloudformation(Service):
         for bucket in buckets:
             self.s3.empty_bucket(bucket)
 
+    def empty_sagemaker_domains(self, domains):
+        """
+        empties the SageMaker domains before the deleting
+            Args:
+                domains (list): list of domains name
+        """
+        for domain in domains:
+            self.sagemaker_studio.empty_domain(domain)
+
+    def empty_sagemaker_user_profile(self, user_profiles):
+        """
+        empties the SageMaker user profiles before the deleting
+            Args:
+                user_profiles (list): list of user profiles name
+        """
+        for user_profile in user_profiles:
+            self.sagemaker_studio.empty_user_profile(user_profile)
+
+    def empty_resources(self, instance):
+        """
+        empties the resources before the deleting
+            Args:
+                instance (dictionary): instance details
+        """
+        self.empty_buckets(self.get_that_resourses_type(instance['Resources'], 'AWS::S3::Bucket'))
+        self.empty_sagemaker_domains(self.get_that_resourses_type(instance['Resources'], 'AWS::SageMaker::Domain'))
+        self.empty_sagemaker_user_profile(self.get_that_resourses_type(instance['Resources'], 'AWS::SageMaker::UserProfile'))
+
     def run(self, event):
         """
         runs the schedulation
@@ -106,7 +138,7 @@ class Cloudformation(Service):
                     if 'EnableTerminationProtection' in instance and instance['EnableTerminationProtection'] is True:
                         self.stack.update_termination_protection(EnableTerminationProtection=False, StackName=instance['StackName'])
                         print('Disabled Termination for ' + instance['StackName'])
-                    self.empty_buckets(self.get_that_resourses_type(instance['Resources'], 'AWS::S3::Bucket'))
+                    self.empty_resources(instance)
                     print('Deleting ' + instance['StackName'])
                     self.stack.delete_stack(StackName=instance['StackName'])
                 else:
@@ -120,6 +152,12 @@ class Cloudformation(Service):
                     print(not_existent_resources)
                 # if instance['StackStatus'] == 'DELETE_FAILED':
                 #     self.stack.delete_stack(StackName=instance['StackName'], RetainResources=not_existent_resources)
+            if self.is_time_to_act(instance['Tags'], 'stop'):
+                # exception because sagemaker user profile is missing of tags
+                non_taggable_resources = self.get_that_resourses_type(instance['Resources'], 'AWS::SageMaker::UserProfile')
+                if non_taggable_resources:
+                    print('Management of the stop of all non taggable resources of ' + instance['StackName'])
+                    self.empty_sagemaker_user_profile(non_taggable_resources)
 
 def main(event, context):
     saving = Cloudformation(event)
