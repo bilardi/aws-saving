@@ -21,6 +21,7 @@ provider:
       Action:
         - cloudformation:*
         - ec2:*
+        - sagemaker:*
         - lambda:*
         - states:*
         - logs:*
@@ -35,6 +36,7 @@ custom:
   stage:
     production: production
     staging: staging
+    cloudconf: cloudconf
     deleteme: deleteme
     default: default
   functionName:
@@ -61,6 +63,7 @@ custom:
     saving:
       production: Disabled
       staging: Disabled
+      cloudconf: Disabled
       default: Enabled
     delete:
       production: '0 18 30 2 .' # for added safety, a non-existent day
@@ -85,15 +88,15 @@ custom:
               - ec2
               - rds
               - s3
+              - sagemaker_studio
             # timezone: 'Europe/Rome'
     default:
 
 package:
-  include:
-    - ./aws_saving/**
-  exclude:
-    - ./tests/**
-    - ./docs/**
+  patterns:
+    - 'aws_saving/**'
+    - '!tests/**'
+    - '!docs/**'
 
 plugins:
   - serverless-python-requirements
