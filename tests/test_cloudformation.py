@@ -56,7 +56,7 @@ class Rds():
     def set_not_exists_simulation(self, boolean):
         self.ne = boolean
 
-class Studio():
+class SagemakerStudio():
     def empty_user_profile(self, name):
         if isinstance(name, str):
             print('Deleting all resources of ' + name)
@@ -72,7 +72,7 @@ class TestService(unittest.TestCase, Cloudformation):
         self.s.stack = CloudformationClient()
         self.s.s3 = S3()
         self.s.rds = Rds()
-        self.s.sagemaker_studio = Studio()
+        self.s.sagemaker_studio = SagemakerStudio()
         unittest.TestCase.__init__(self, *args, **kwargs)
 
     def get_output(self, event = {}):

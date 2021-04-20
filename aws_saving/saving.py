@@ -59,6 +59,17 @@ class Saving():
         """
         print('Running AWS saving on {} service'.format(service_name.upper()))
 
+    def underscore_to_camel_case_capitalized(self, string):
+        """
+        converts a string of words with underscore like delimiter in camel case capitalized
+            Args:
+                string (string): String that it could contain underscore
+            Returns:
+                A CamelCase string capitalized
+        """
+        first_word, *words = string.split('_')
+        return first_word.capitalize() + ''.join(word.capitalize() for word in words)
+
     def run_services(self, event):
         """
         runs the schedulation for each service implemented
@@ -70,7 +81,7 @@ class Saving():
         for service_name in self.services_name:
             self.print_service_log(service_name)
             load_module = importlib.import_module('aws_saving.' + service_name)
-            service_class = getattr(load_module, service_name.capitalize())
+            service_class = getattr(load_module, self.underscore_to_camel_case_capitalized(service_name))
             service = service_class(event)
             service.run(event)
 

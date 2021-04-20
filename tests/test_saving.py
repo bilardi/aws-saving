@@ -21,6 +21,10 @@ class TestService(unittest.TestCase, Saving):
         output = out.getvalue().strip()
         self.assertEqual(output, "Running AWS saving on SERVICE service")
 
+    def test_underscore_to_camel_case_capitalized(self):
+        self.assertEqual(self.s.underscore_to_camel_case_capitalized("service"), "Service")
+        self.assertEqual(self.s.underscore_to_camel_case_capitalized("service_subservice"), "ServiceSubservice")
+
     def test_run(self):
         with hlp.captured_output() as (out, err):
             with self.assertRaises(NotImplementedError):

@@ -22,7 +22,7 @@ import boto3
 from .service import Service
 from .s3 import S3
 from .rds import Rds
-from .sagemaker_studio import Studio
+from .sagemaker_studio import SagemakerStudio
 
 class Cloudformation(Service):
     stack = None
@@ -35,7 +35,7 @@ class Cloudformation(Service):
         self.stack = boto3.client('cloudformation')
         self.s3 = S3(event)
         self.rds = Rds(event)
-        self.sagemaker_studio = Studio(event)
+        self.sagemaker_studio = SagemakerStudio(event)
         Service.__init__(self, event)
 
     def get_instances(self):

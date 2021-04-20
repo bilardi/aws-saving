@@ -22,7 +22,7 @@ import boto3
 from botocore.exceptions import ClientError
 from .service import Service
 
-class Studio(Service):
+class SagemakerStudio(Service):
     sagemaker = None
     date_tuple = None
 

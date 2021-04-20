@@ -3,9 +3,9 @@ import json
 import datetime
 from botocore.exceptions import ClientError
 import tests.helper as hlp
-from aws_saving.sagemaker_studio import Studio
+from aws_saving.sagemaker_studio import SagemakerStudio
 
-class SageMakerClient():
+class SagemakerClient():
     ld = None
     lup = None
     la = None
@@ -73,12 +73,12 @@ class SageMakerClient():
             return
         raise ValueError
 
-class TestService(unittest.TestCase, Studio):
+class TestService(unittest.TestCase, SagemakerStudio):
     s = None
 
     def __init__(self, *args, **kwargs):
-        self.s = Studio({})
-        self.s.sagemaker = SageMakerClient()
+        self.s = SagemakerStudio({})
+        self.s.sagemaker = SagemakerClient()
         unittest.TestCase.__init__(self, *args, **kwargs)
 
     def get_output(self, event = {}):
