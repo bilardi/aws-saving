@@ -57,9 +57,12 @@ class Rds():
         self.ne = boolean
 
 class SagemakerStudio():
-    def empty_user_profile(self, name):
-        if isinstance(name, str):
-            print('Deleting all resources of ' + name)
+    def empty_user_profile(self, name, even):
+        if isinstance(name, str) and isinstance(even, bool):
+            if even == True:
+                print('Deleting all resources of ' + name)
+            else:
+                print('Deleting all resources of ' + name + ' except JupyterServer')
     def empty_domain(self, name):
         if isinstance(name, str):
             print('Deleting all resources of ' + name)
@@ -119,6 +122,12 @@ class TestService(unittest.TestCase, Cloudformation):
     def test_empty_sagemaker_user_profile(self):
         with hlp.captured_output() as (out, err):
             self.s.empty_sagemaker_user_profile(['sagemaker-user-profile-id'])
+        self.assertEqual(out.getvalue().strip(), "Deleting all resources of sagemaker-user-profile-id except JupyterServer")
+        with hlp.captured_output() as (out, err):
+            self.s.empty_sagemaker_user_profile(['sagemaker-user-profile-id'], False)
+        self.assertEqual(out.getvalue().strip(), "Deleting all resources of sagemaker-user-profile-id except JupyterServer")
+        with hlp.captured_output() as (out, err):
+            self.s.empty_sagemaker_user_profile(['sagemaker-user-profile-id'], True)
         self.assertEqual(out.getvalue().strip(), "Deleting all resources of sagemaker-user-profile-id")
 
     def test_run(self):
@@ -134,8 +143,8 @@ class TestService(unittest.TestCase, Cloudformation):
         self.assertEqual(self.get_output({"force":["aurora"]}), "aurora\nbucket\nec2\nsagemaker-domain\nsagemaker-user-profile")
         test = now.replace(hour=18, minute=00, day=6)
         self.s.date_tuple = (test.year, test.month, test.day, test.hour, test.minute)
-        self.assertEqual(self.get_output(), "aurora\nWarning: modify the EnableTerminationProtection value to false for deleting aurora\nbucket\nDeleting all resources of bucket\nDeleting bucket\nec2\nDeleting ec2\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl")
-        self.assertEqual(self.get_output({"force":["aurora"]}), "aurora\nDisabled Termination for aurora\nDeleting aurora\nbucket\nDeleting all resources of bucket\nDeleting bucket\nec2\nDeleting ec2\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl")
+        self.assertEqual(self.get_output(), "aurora\nWarning: modify the EnableTerminationProtection value to false for deleting aurora\nbucket\nDeleting all resources of bucket\nDeleting bucket\nec2\nDeleting ec2\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl except JupyterServer")
+        self.assertEqual(self.get_output({"force":["aurora"]}), "aurora\nDisabled Termination for aurora\nDeleting aurora\nbucket\nDeleting all resources of bucket\nDeleting bucket\nec2\nDeleting ec2\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl except JupyterServer")
 
         for stack in self.s.stack.ds['Stacks']:
             stack['StackStatus'] = 'DELETE_IN_PROGRESS'
@@ -143,8 +152,8 @@ class TestService(unittest.TestCase, Cloudformation):
         self.s.rds.set_not_exists_simulation(False)
         test = now.replace(hour=18, minute=00, day=6)
         self.s.date_tuple = (test.year, test.month, test.day, test.hour, test.minute)
-        self.assertEqual(self.get_output(), "aurora\nWarning: the StackStatus named DELETE_IN_PROGRESS is not managed\nbucket\nWarning: the StackStatus named DELETE_IN_PROGRESS is not managed\nec2\nWarning: the StackStatus named DELETE_IN_PROGRESS is not managed\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl")
-        self.assertEqual(self.get_output({"force":["aurora"]}), "aurora\nWarning: the StackStatus named DELETE_IN_PROGRESS is not managed\nbucket\nWarning: the StackStatus named DELETE_IN_PROGRESS is not managed\nec2\nWarning: the StackStatus named DELETE_IN_PROGRESS is not managed\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl")
+        self.assertEqual(self.get_output(), "aurora\nWarning: the StackStatus named DELETE_IN_PROGRESS is not managed\nbucket\nWarning: the StackStatus named DELETE_IN_PROGRESS is not managed\nec2\nWarning: the StackStatus named DELETE_IN_PROGRESS is not managed\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl except JupyterServer")
+        self.assertEqual(self.get_output({"force":["aurora"]}), "aurora\nWarning: the StackStatus named DELETE_IN_PROGRESS is not managed\nbucket\nWarning: the StackStatus named DELETE_IN_PROGRESS is not managed\nec2\nWarning: the StackStatus named DELETE_IN_PROGRESS is not managed\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl except JupyterServer")
 
         for stack in self.s.stack.ds['Stacks']:
             stack['StackStatus'] = 'UPDATE_FAILED'
@@ -152,8 +161,8 @@ class TestService(unittest.TestCase, Cloudformation):
         self.s.rds.set_not_exists_simulation(False)
         test = now.replace(hour=18, minute=00, day=6)
         self.s.date_tuple = (test.year, test.month, test.day, test.hour, test.minute)
-        self.assertEqual(self.get_output(), "aurora\nWarning: the StackStatus named UPDATE_FAILED is not managed\nbucket\nWarning: the StackStatus named UPDATE_FAILED is not managed\nec2\nWarning: the StackStatus named UPDATE_FAILED is not managed\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl")
-        self.assertEqual(self.get_output({"force":["aurora"]}), "aurora\nWarning: the StackStatus named UPDATE_FAILED is not managed\nbucket\nWarning: the StackStatus named UPDATE_FAILED is not managed\nec2\nWarning: the StackStatus named UPDATE_FAILED is not managed\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl")
+        self.assertEqual(self.get_output(), "aurora\nWarning: the StackStatus named UPDATE_FAILED is not managed\nbucket\nWarning: the StackStatus named UPDATE_FAILED is not managed\nec2\nWarning: the StackStatus named UPDATE_FAILED is not managed\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl except JupyterServer")
+        self.assertEqual(self.get_output({"force":["aurora"]}), "aurora\nWarning: the StackStatus named UPDATE_FAILED is not managed\nbucket\nWarning: the StackStatus named UPDATE_FAILED is not managed\nec2\nWarning: the StackStatus named UPDATE_FAILED is not managed\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl except JupyterServer")
 
         for stack in self.s.stack.ds['Stacks']:
             stack['StackStatus'] = 'UPDATE_FAILED'
@@ -161,8 +170,8 @@ class TestService(unittest.TestCase, Cloudformation):
         self.s.rds.set_not_exists_simulation(True)
         test = now.replace(hour=18, minute=00, day=6)
         self.s.date_tuple = (test.year, test.month, test.day, test.hour, test.minute)
-        self.assertEqual(self.get_output(), "aurora\nWarning: the StackStatus named UPDATE_FAILED is not managed\nYou have to skip manually those resources for deleting the stack:\n['aurora', 'aurora-1', 'aurora-2']\nbucket\nWarning: the StackStatus named UPDATE_FAILED is not managed\nYou have to skip manually those resources for deleting the stack:\n['bucket']\nec2\nWarning: the StackStatus named UPDATE_FAILED is not managed\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl")
-        self.assertEqual(self.get_output({"force":["aurora"]}), "aurora\nWarning: the StackStatus named UPDATE_FAILED is not managed\nYou have to skip manually those resources for deleting the stack:\n['aurora', 'aurora-1', 'aurora-2']\nbucket\nWarning: the StackStatus named UPDATE_FAILED is not managed\nYou have to skip manually those resources for deleting the stack:\n['bucket']\nec2\nWarning: the StackStatus named UPDATE_FAILED is not managed\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl")
+        self.assertEqual(self.get_output(), "aurora\nWarning: the StackStatus named UPDATE_FAILED is not managed\nYou have to skip manually those resources for deleting the stack:\n['aurora', 'aurora-1', 'aurora-2']\nbucket\nWarning: the StackStatus named UPDATE_FAILED is not managed\nYou have to skip manually those resources for deleting the stack:\n['bucket']\nec2\nWarning: the StackStatus named UPDATE_FAILED is not managed\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl except JupyterServer")
+        self.assertEqual(self.get_output({"force":["aurora"]}), "aurora\nWarning: the StackStatus named UPDATE_FAILED is not managed\nYou have to skip manually those resources for deleting the stack:\n['aurora', 'aurora-1', 'aurora-2']\nbucket\nWarning: the StackStatus named UPDATE_FAILED is not managed\nYou have to skip manually those resources for deleting the stack:\n['bucket']\nec2\nWarning: the StackStatus named UPDATE_FAILED is not managed\nsagemaker-domain\nsagemaker-user-profile\nManagement of the stop of all non taggable resources of sagemaker-user-profile\nDeleting all resources of user|d-abcdefghijkl except JupyterServer")
 
 if __name__ == '__main__':
     unittest.main()

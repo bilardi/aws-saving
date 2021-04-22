@@ -107,14 +107,20 @@ class TestService(unittest.TestCase, SagemakerStudio):
     def test_empty_user_profile(self):
         with hlp.captured_output() as (out, err):
             self.s.empty_user_profile('user|id')
-        self.assertEqual(out.getvalue().strip(), "Deleting all objects of user|id\nDeleting app named default")
+        self.assertEqual(out.getvalue().strip(), "Deleting all objects of user|id\nDeleting app named datascience")
+        with hlp.captured_output() as (out, err):
+            self.s.empty_user_profile('user|id', False)
+        self.assertEqual(out.getvalue().strip(), "Deleting all objects of user|id\nDeleting app named datascience")
+        with hlp.captured_output() as (out, err):
+            self.s.empty_user_profile('user|id', True)
+        self.assertEqual(out.getvalue().strip(), "Deleting all objects of user|id\nDeleting app named default\nDeleting app named datascience")
         with self.assertRaises(ValueError):
             self.s.empty_user_profile('user')
 
     def test_empty_domain(self):
         with hlp.captured_output() as (out, err):
             self.s.empty_domain('id')
-        self.assertEqual(out.getvalue().strip(), "Deleting all objects of id\nDeleting user profile named user\nDeleting app named default")
+        self.assertEqual(out.getvalue().strip(), "Deleting all objects of id\nDeleting user profile named user\nDeleting app named default\nDeleting app named datascience")
         with hlp.captured_output() as (out, err):
             self.s.empty_domain(1)
         self.assertEqual(out.getvalue().strip(), "The domain 1 not exists")
@@ -122,7 +128,7 @@ class TestService(unittest.TestCase, SagemakerStudio):
     def test_stop_apps(self):
         with hlp.captured_output() as (out, err):
             self.s.stop_apps('id')
-        self.assertEqual(out.getvalue().strip(), "Deleting all objects of user\nDeleting app named default")
+        self.assertEqual(out.getvalue().strip(), "Deleting all objects of user\nDeleting app named datascience")
 
     def test_run(self):
         now = datetime.datetime.now()
@@ -139,9 +145,9 @@ class TestService(unittest.TestCase, SagemakerStudio):
         self.assertEqual(self.s.sagemaker.policy, None)
         test = now.replace(hour=18, minute=00, day=6)
         self.s.date_tuple = (test.year, test.month, test.day, test.hour, test.minute)
-        self.assertEqual(self.get_output(), "studio\nDeleting all objects of user\nDeleting app named default")
+        self.assertEqual(self.get_output(), "studio\nDeleting all objects of user\nDeleting app named datascience")
         self.assertEqual(self.s.sagemaker.policy, None)
-        self.assertEqual(self.get_output({"force":["id"]}), "studio\nDeleting all objects of user\nDeleting app named default")
+        self.assertEqual(self.get_output({"force":["id"]}), "studio\nDeleting all objects of user\nDeleting app named datascience")
         self.assertEqual(self.s.sagemaker.policy, None)
 
         self.s.sagemaker.set_policy_none()
@@ -155,9 +161,9 @@ class TestService(unittest.TestCase, SagemakerStudio):
         self.assertEqual(self.s.sagemaker.policy, None)
         test = now.replace(hour=18, minute=00, day=6)
         self.s.date_tuple = (test.year, test.month, test.day, test.hour, test.minute)
-        self.assertEqual(self.get_output(), "studio\nDeleting all objects of user\nDeleting app named default")
+        self.assertEqual(self.get_output(), "studio\nDeleting all objects of user\nDeleting app named datascience")
         self.assertEqual(self.s.sagemaker.policy, None)
-        self.assertEqual(self.get_output({"force":["id"]}), "studio\nDeleting all objects of user\nDeleting app named default")
+        self.assertEqual(self.get_output({"force":["id"]}), "studio\nDeleting all objects of user\nDeleting app named datascience")
         self.assertEqual(self.s.sagemaker.policy, None)
 
         self.s.sagemaker.lt['Tags'][0]['Key'] = 'Delete'
@@ -172,9 +178,9 @@ class TestService(unittest.TestCase, SagemakerStudio):
         self.assertEqual(self.s.sagemaker.policy, None)
         test = now.replace(hour=18, minute=00, day=6)
         self.s.date_tuple = (test.year, test.month, test.day, test.hour, test.minute)
-        self.assertEqual(self.get_output(), "studio\nDeleting all objects of id\nDeleting user profile named user\nDeleting app named default\nDeleting studio")
+        self.assertEqual(self.get_output(), "studio\nDeleting all objects of id\nDeleting user profile named user\nDeleting app named default\nDeleting app named datascience\nDeleting studio")
         self.assertEqual(self.s.sagemaker.policy, 'Retain')
-        self.assertEqual(self.get_output({"force":["id"]}), "studio\nDeleting all objects of id\nDeleting user profile named user\nDeleting app named default\nDeleting studio")
+        self.assertEqual(self.get_output({"force":["id"]}), "studio\nDeleting all objects of id\nDeleting user profile named user\nDeleting app named default\nDeleting app named datascience\nDeleting studio")
         self.assertEqual(self.s.sagemaker.policy, 'Delete')
 
         self.s.sagemaker.set_policy_none()
@@ -188,9 +194,9 @@ class TestService(unittest.TestCase, SagemakerStudio):
         self.assertEqual(self.s.sagemaker.policy, None)
         test = now.replace(hour=18, minute=00, day=6)
         self.s.date_tuple = (test.year, test.month, test.day, test.hour, test.minute)
-        self.assertEqual(self.get_output(), "studio\nDeleting all objects of id\nDeleting user profile named user\nDeleting app named default\nDeleting studio\nWarning: domain named studio is not empty, you have to force for deleting it")
+        self.assertEqual(self.get_output(), "studio\nDeleting all objects of id\nDeleting user profile named user\nDeleting app named default\nDeleting app named datascience\nDeleting studio\nWarning: domain named studio is not empty, you have to force for deleting it")
         self.assertEqual(self.s.sagemaker.policy, None)
-        self.assertEqual(self.get_output({"force":["id"]}), "studio\nDeleting all objects of id\nDeleting user profile named user\nDeleting app named default\nDeleting studio\nWarning: domain named studio is not empty, you have to force for deleting it")
+        self.assertEqual(self.get_output({"force":["id"]}), "studio\nDeleting all objects of id\nDeleting user profile named user\nDeleting app named default\nDeleting app named datascience\nDeleting studio\nWarning: domain named studio is not empty, you have to force for deleting it")
         self.assertEqual(self.s.sagemaker.policy, None)
 
 # Apps, "Status": "Deleted"|"Deleting"|"Failed"|"InService"|"Pending"

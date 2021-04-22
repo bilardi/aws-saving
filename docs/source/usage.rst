@@ -34,12 +34,14 @@ You need an infrastructure with
 * a RDS instance where loading the bucket data
 * an EC2 instance where installing your software
 * a RDS cluster where loading the ETL data
+* a domain with an user of SageMaker Studio
 * a lambda for managing the saving costs
 
 This system is not necessary 24H but only 2 hours in the morning from 8:00 AM and the developers work until 6:00 PM
 
 * the EC2 and RDS instances in production can be started at 7:30 AM and stopped at 10:30 AM
 * the stacks in staging (*) can be deleted at 6:00 PM
+* the apps created by user of SageMaker Studio can be deleted at 6:00PM
 
 The tags that you have to add to your objects are
 
@@ -47,5 +49,6 @@ The tags that you have to add to your objects are
 * Key=Start,Value='``30 7 . . .``' for EC2 and RDS instances in production
 * Key=Stop,Value='``30 10 . . .``' for EC2 and RDS instances in production
 * Key=Delete,Value='``0 18 . . .``' for all stacks in staging (*)
+* Key=Stop,Value='``0 18 . . .``' for all apps in that domain of SageMaker Studio
 
 (*) or any other non-production environment that you can re-deploy as needed.

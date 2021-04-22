@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2021-04-22
+
+### Added
+- Vpc details and SageMaker Studio function on serverless.yaml file
+- SageMaker Studio resources on default.resources.yaml
+- SageMaker Studio empty_user_profile method exception for JupyterServer
+
 ## [1.0.0] - 2021-04-20
 
 ### Changed
@@ -50,8 +57,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - the init files of package and tests
 - the documentation by sphinx
 
-[Unreleased]: https://github.com/bilardi/aws-saving/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/bilardi/aws-saving/releases/tag/v0.0.6...v0.1.0
+[Unreleased]: https://github.com/bilardi/aws-saving/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/bilardi/aws-saving/releases/tag/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/bilardi/aws-saving/releases/tag/v0.0.6...v1.0.0
 [0.0.6]: https://github.com/bilardi/aws-saving/releases/tag/v0.0.5...v0.0.6
 [0.0.5]: https://github.com/bilardi/aws-saving/releases/tag/v0.0.4...v0.0.5
 [0.0.4]: https://github.com/bilardi/aws-saving/releases/tag/v0.0.3...v0.0.4

@@ -17,6 +17,7 @@ if you want to use the guide below, you have to install Serverless framework bef
 
     npm install -g serverless
     npm install serverless-python-requirements
+    npm install serverless-cloudformation-sub-variables
 
 If you want to use another AWS tool, you can see the repository `aws-tool-comparison <https://github.com/bilardi/aws-tool-comparison>`_ before to implement your version.
 

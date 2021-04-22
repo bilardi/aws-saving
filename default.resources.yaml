@@ -56,4 +56,55 @@ OnlyRDSInstance:
           Value: ${self:custom.resources.SavingValue}
         - Key: ${self:custom.resources.ActionKey}
           Value: ${self:custom.resources.ActionValue}
-    
+SagemakerStudioRole:
+    Type: AWS::IAM::Role
+    Properties:
+        AssumeRolePolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+                - Effect: Allow
+                  Principal:
+                      Service:
+                          - sagemaker.amazonaws.com
+                  Action:
+                    - sts:AssumeRole
+        ManagedPolicyArns:
+          - 'arn:aws:iam::aws:policy/AmazonSageMakerFullAccess'
+          - 'arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess'
+SagemakerStudioPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+        PolicyName: 's3-for-sagemaker-studio'
+        PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+                - Effect: Allow
+                  Action:
+                      - s3:*
+                  Resource:
+                      - 'arn:aws:s3:::sagemaker-#{AWS::Region}-#{AWS::AccountId}'
+                      - 'arn:aws:s3:::sagemaker-#{AWS::Region}-#{AWS::AccountId}/*'
+        Roles:
+            - Ref: SagemakerStudioRole
+SagemakerStudioDomain:
+    Type: AWS::SageMaker::Domain
+    Properties: 
+        AppNetworkAccessType: PublicInternetOnly
+        AuthMode: IAM
+        DefaultUserSettings: 
+            ExecutionRole:
+                Fn::GetAtt: [SagemakerStudioRole, Arn]
+        DomainName: studio
+        SubnetIds: ${self:custom.provider.vpc.subnetIds}
+        VpcId: ${self:custom.provider.vpc.id}
+        Tags:
+        - Key: Saving
+          Value: ${self:custom.resources.SavingValue}
+        - Key: ${self:custom.resources.ActionKey}
+          Value: ${self:custom.resources.ActionValue}
+UserProfile:
+    Type: AWS::SageMaker::UserProfile
+    Properties: 
+      DomainId:
+          Ref: SagemakerStudioDomain
+      UserProfileName: test

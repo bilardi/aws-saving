@@ -104,14 +104,15 @@ class Cloudformation(Service):
         for domain in domains:
             self.sagemaker_studio.empty_domain(domain)
 
-    def empty_sagemaker_user_profile(self, user_profiles):
+    def empty_sagemaker_user_profile(self, user_profiles, even_jupyter_server = False):
         """
         empties the SageMaker user profiles before the deleting
             Args:
                 user_profiles (list): list of user profiles name
+                even_jupyter_server (boolean): if True, it also deletes app with type JupyterServer 
         """
         for user_profile in user_profiles:
-            self.sagemaker_studio.empty_user_profile(user_profile)
+            self.sagemaker_studio.empty_user_profile(user_profile, even_jupyter_server)
 
     def empty_resources(self, instance):
         """
@@ -121,7 +122,7 @@ class Cloudformation(Service):
         """
         self.empty_buckets(self.get_that_resourses_type(instance['Resources'], 'AWS::S3::Bucket'))
         self.empty_sagemaker_domains(self.get_that_resourses_type(instance['Resources'], 'AWS::SageMaker::Domain'))
-        self.empty_sagemaker_user_profile(self.get_that_resourses_type(instance['Resources'], 'AWS::SageMaker::UserProfile'))
+        self.empty_sagemaker_user_profile(self.get_that_resourses_type(instance['Resources'], 'AWS::SageMaker::UserProfile'), True)
 
     def run(self, event):
         """

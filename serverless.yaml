@@ -1,5 +1,4 @@
 service: saving
-description: Lambda function for saving the services costs
 provider:
   name: aws
   stage: ${opt:stage, 'development'}
@@ -7,7 +6,8 @@ provider:
   region: ${opt:region, 'eu-west-1'}
   memorySize: 512
   timeout: 300
-  profile: ${opt:profile, ''}
+  lambdaHashingVersion: 20201221
+#  profile: ${opt:profile, ''}
   stackTags:
     Saving: ${self:custom.savingTags.saving.${self:provider.stage}, self:custom.savingTags.saving.default}
     Delete: ${self:custom.savingTags.delete.${self:provider.stage}, self:custom.savingTags.delete.default} 
@@ -16,23 +16,30 @@ provider:
   tags:
     Saving: ${self:custom.savingTags.saving.${self:provider.stage}, self:custom.savingTags.saving.default}
     Delete: ${self:custom.savingTags.delete.${self:provider.stage}, self:custom.savingTags.delete.default}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - cloudformation:*
-        - ec2:*
-        - sagemaker:*
-        - lambda:*
-        - states:*
-        - logs:*
-        - iam:*
-        - rds:*
-        - s3:*
-      Resource: "*"
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - cloudformation:*
+            - ec2:*
+            - sagemaker:*
+            - lambda:*
+            - states:*
+            - logs:*
+            - iam:*
+            - rds:*
+            - s3:*
+          Resource: "*"
 
 custom:
   pythonRequirements:
     pythonBin: /usr/bin/python3
+  provider:
+    # vpc:
+    #   id: vpc-a0b1c2d3e4f5g6h7i8j9k
+    #   subnetIds:
+    #    - subnet-a0b1c2d3e4f5g6h7i8j9k
   stage:
     production: production
     staging: staging
@@ -82,6 +89,7 @@ custom:
           input:
             # force:
             #   - i-01234567890
+            #   - d-abcdefghijkl
             # invoke_lambda: true
             services_name:
               - cloudformation
@@ -90,7 +98,6 @@ custom:
               - s3
               - sagemaker_studio
             # timezone: 'Europe/Rome'
-    default:
 
 package:
   patterns:
@@ -100,13 +107,14 @@ package:
 
 plugins:
   - serverless-python-requirements
+  - serverless-cloudformation-sub-variables
 
 functions:
   Saving:
     name: ${self:custom.functionName.${self:provider.stage}, self:custom.functionName.default}
     handler: aws_saving/saving.main
     reservedConcurrency: 1
-    events: ${self:custom.schedule.${self:provider.stage}, self:custom.schedule.default}
+    # events: ${self:custom.schedule.${self:provider.stage}, self:custom.schedule.default}
   # S3:
   #   name: s3-${self:custom.functionName.${self:provider.stage}, self:custom.functionName.default}
   #   handler: aws_saving/S3.main
@@ -122,6 +130,10 @@ functions:
   # Cloudformation:
   #   name: cloudformation-${self:custom.functionName.${self:provider.stage}, self:custom.functionName.default}
   #   handler: aws_saving/Cloudformation.main
+  #   reservedConcurrency: 1
+  # SagemakerStudio:
+  #   name: sagemaker-studio-${self:custom.functionName.${self:provider.stage}, self:custom.functionName.default}
+  #   handler: aws_saving/SagemakerStudio.main
   #   reservedConcurrency: 1
 
 resources:

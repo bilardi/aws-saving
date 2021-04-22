@@ -49,16 +49,32 @@ class SagemakerStudio(Service):
                     instances.append(instance)
         return instances
 
-    def delete_apps(self, domain_id, user_profile_name):
+    def really_delete_server(self, even_jupyter_server, app_type):
+        """
+        checks if really it has to delete that app type
+            Args:
+                even_jupyter_server (boolean): if True, it also deletes app with type JupyterServer
+                app_type (string): app type among JupyterServer, KernelGateway, TensorBoard
+            Returns:
+                A boolean True if it has to be deleted
+        """
+        if even_jupyter_server == True:
+            return True
+        elif app_type == 'JupyterServer':
+            return False
+        return True
+
+    def delete_apps(self, domain_id, user_profile_name, even_jupyter_server = False):
         """
         deletes the apps
             Args:
                 domain_id (string): the domain identifier
                 user_profile_name (string): the user profile name
+                even_jupyter_server (boolean): if True, it also deletes app with type JupyterServer 
         """
         app_list = self.sagemaker.list_apps(DomainIdEquals=domain_id, UserProfileNameEquals=user_profile_name)
         for app in app_list['Apps']:
-            if app['Status'] not in ['Deleted','Deleting']:
+            if app['Status'] not in ['Deleted','Deleting'] and self.really_delete_server(even_jupyter_server, app['AppType']):
                 print('Deleting app named ' + app['AppName'])
                 self.sagemaker.delete_app(
                     DomainId=domain_id,
@@ -69,7 +85,7 @@ class SagemakerStudio(Service):
 
     def stop_apps(self, domain_id):
         """
-        deletes the apps
+        deletes the apps except those with type JupyterServer
             Args:
                 domain_id (string): the domain identifier
         """
@@ -79,19 +95,20 @@ class SagemakerStudio(Service):
                 print('Deleting all objects of ' + user_profile['UserProfileName'])
                 self.delete_apps(domain_id, user_profile['UserProfileName'])
 
-    def empty_user_profile(self, user_profile_id):
+    def empty_user_profile(self, user_profile_id, even_jupyter_server = False):
         """
         empties the user profile
             Args:
                 user_profile_id (string): the user profile identifier
+                even_jupyter_server (boolean): if True, it also deletes app with type JupyterServer 
         """
         [user_profile_name, domain_id] = user_profile_id.split('|')
         print('Deleting all objects of ' + user_profile_id)
-        self.delete_apps(domain_id, user_profile_name)
+        self.delete_apps(domain_id, user_profile_name, even_jupyter_server)
 
-    def delete_user_profile(self, domain_id):
+    def delete_user_profiles(self, domain_id):
         """
-        deletes the user profiles
+        deletes the user profiles of a domain
             Args:
                 domain_id (string): the domain identifier
         """
@@ -99,7 +116,7 @@ class SagemakerStudio(Service):
         for user_profile in user_profile_list['UserProfiles']:
             print('Deleting user profile named ' + user_profile['UserProfileName'])
             if user_profile['Status'] not in ['Deleting']:
-                self.delete_apps(domain_id, user_profile['UserProfileName'])
+                self.delete_apps(domain_id, user_profile['UserProfileName'], True)
                 self.sagemaker.delete_user_profile(
                     DomainId=domain_id,
                     UserProfileName=user_profile['UserProfileName']
@@ -131,7 +148,7 @@ class SagemakerStudio(Service):
         """
         if self.already_exists(domain_id):
             print('Deleting all objects of ' + domain_id)
-            self.delete_user_profile(domain_id)
+            self.delete_user_profiles(domain_id)
 
     def run(self, event):
         """
