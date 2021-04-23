@@ -1,7 +1,7 @@
 Getting started
 ===============
 
-AWS saving package is implemented for deploying a lambda that you can invoke for stopping, deleting or starting each RDS, EC2, bucket and Stack instance.
+AWS saving package is implemented for deploying a lambda that you can invoke for stopping, deleting or starting each RDS, EC2, bucket, Sagemaker domain and Stack instance.
 
 The goal is to implement this package for each AWS service can stop, delete and start its instances.
 
@@ -11,13 +11,11 @@ Prerequisites
 #############
 
 You can use `Serverless framework <https://www.serverless.com/framework/docs/providers/aws/guide/installation/>`_ for deploying the lambda function:
-if you want to use the guide below, you have to install Serverless framework before and one plugin
+if you want to use the guide below, you have to install Serverless framework before
 
 .. code-block:: bash
 
     npm install -g serverless
-    npm install serverless-python-requirements
-    npm install serverless-cloudformation-sub-variables
 
 If you want to use another AWS tool, you can see the repository `aws-tool-comparison <https://github.com/bilardi/aws-tool-comparison>`_ before to implement your version.
 
@@ -31,6 +29,7 @@ The package is not self-consistent. So you have to download the package by githu
     git clone https://github.com/bilardi/aws-saving
     cd aws-saving/
     pip3 install --upgrade -r requirements.txt
+    npm install
     export AWS_PROFILE=your-account
     SLS_DEBUG=* sls deploy --stage production
 

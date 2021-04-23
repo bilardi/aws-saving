@@ -11,11 +11,13 @@ provider:
   stackTags:
     Saving: ${self:custom.savingTags.saving.${self:provider.stage}, self:custom.savingTags.saving.default}
     Delete: ${self:custom.savingTags.delete.${self:provider.stage}, self:custom.savingTags.delete.default} 
+    # Stop: ${self:custom.savingTags.delete.${self:provider.stage}, self:custom.savingTags.delete.default} 
   deploymentBucket:
     blockPublicAccess: true
   tags:
     Saving: ${self:custom.savingTags.saving.${self:provider.stage}, self:custom.savingTags.saving.default}
     Delete: ${self:custom.savingTags.delete.${self:provider.stage}, self:custom.savingTags.delete.default}
+    # Stop: ${self:custom.savingTags.delete.${self:provider.stage}, self:custom.savingTags.delete.default}
   iam:
     role:
       statements:
