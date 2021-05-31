@@ -7,7 +7,6 @@ provider:
   memorySize: 512
   timeout: 300
   lambdaHashingVersion: 20201221
-#  profile: ${opt:profile, ''}
   stackTags:
     Saving: ${self:custom.savingTags.saving.${self:provider.stage}, self:custom.savingTags.saving.default}
     Delete: ${self:custom.savingTags.delete.${self:provider.stage}, self:custom.savingTags.delete.default} 
@@ -28,10 +27,20 @@ provider:
             - sagemaker:*
             - lambda:*
             - states:*
+            - cloudwatch:*
+            - events:*
             - logs:*
+            - sns:*
             - iam:*
             - rds:*
             - s3:*
+            - codepipeline:*
+            - codebuild:*
+            - application-autoscaling:*
+            - elasticloadbalancing:*
+            - secretsmanager:*
+            - route53:*
+            - ecs:*
           Resource: "*"
 
 custom:
