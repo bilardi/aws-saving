@@ -1,0 +1,10 @@
+{
+    "repositories": [
+        {
+            "repositoryArn": "arn:aws:ecr:eu-west-1:1234567890:repository/mlops-studio-processing",
+            "registryId": "1234567890",
+            "repositoryName": "mlops-studio-processing",
+            "repositoryUri": "1234567890.dkr.ecr.eu-west-1.amazonaws.com/mlops-studio-processing"
+        }
+    ]
+}

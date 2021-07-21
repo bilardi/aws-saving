@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2021-07-21
+
+### Added
+- Amazon ECR service
+
 ## [1.1.0] - 2021-04-22
 
 ### Added
@@ -57,7 +62,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - the init files of package and tests
 - the documentation by sphinx
 
-[Unreleased]: https://github.com/bilardi/aws-saving/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/bilardi/aws-saving/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/bilardi/aws-saving/releases/tag/v1.1.0...v1.1.1
 [1.1.0]: https://github.com/bilardi/aws-saving/releases/tag/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/bilardi/aws-saving/releases/tag/v0.0.6...v1.0.0
 [0.0.6]: https://github.com/bilardi/aws-saving/releases/tag/v0.0.5...v0.0.6
