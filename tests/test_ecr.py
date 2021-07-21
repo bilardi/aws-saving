@@ -3,9 +3,9 @@ import json
 import datetime
 from botocore.exceptions import ClientError
 import tests.helper as hlp
-from aws_saving.ecr import ECR
+from aws_saving.ecr import Ecr
 
-class ECRClient():
+class EcrClient():
     drs = None
     ltfr = None
     dr = None
@@ -41,12 +41,12 @@ class ECRClient():
             return
         raise ValueError
 
-class TestService(unittest.TestCase, ECR):
+class TestService(unittest.TestCase, Ecr):
     s = None
 
     def __init__(self, *args, **kwargs):
-        self.s = ECR({})
-        self.s.ecr = ECRClient()
+        self.s = Ecr({})
+        self.s.ecr = EcrClient()
         unittest.TestCase.__init__(self, *args, **kwargs)
 
     def get_output(self, event = {}):

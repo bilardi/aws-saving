@@ -23,12 +23,14 @@ from .service import Service
 from .s3 import S3
 from .rds import Rds
 from .sagemaker_studio import SagemakerStudio
+from .ecr import Ecr
 
 class Cloudformation(Service):
     stack = None
     s3 = None
     rds = None
     sagemaker_studio = None
+    ecr = None
     date_tuple = None
 
     def __init__(self, event):
@@ -36,6 +38,7 @@ class Cloudformation(Service):
         self.s3 = S3(event)
         self.rds = Rds(event)
         self.sagemaker_studio = SagemakerStudio(event)
+        self.ecr = Ecr(event)
         Service.__init__(self, event)
 
     def get_instances(self):
@@ -114,6 +117,16 @@ class Cloudformation(Service):
         for user_profile in user_profiles:
             self.sagemaker_studio.empty_user_profile(user_profile, even_jupyter_server)
 
+    def delete_ecr_repository(self, repositories):
+        """
+        empties the SageMaker user profiles before the deleting
+            Args:
+                user_profiles (list): list of user profiles name
+                even_jupyter_server (boolean): if True, it also deletes app with type JupyterServer 
+        """
+        for repository in repositories:
+            self.ecr.delete_repository(repository)
+
     def empty_resources(self, instance):
         """
         empties the resources before the deleting
@@ -123,6 +136,7 @@ class Cloudformation(Service):
         self.empty_buckets(self.get_that_resourses_type(instance['Resources'], 'AWS::S3::Bucket'))
         self.empty_sagemaker_domains(self.get_that_resourses_type(instance['Resources'], 'AWS::SageMaker::Domain'))
         self.empty_sagemaker_user_profile(self.get_that_resourses_type(instance['Resources'], 'AWS::SageMaker::UserProfile'), True)
+        self.delete_ecr_repository(self.get_that_resourses_type(instance['Resources'], 'AWS::ECR::Repository'))
 
     def run(self, event):
         """

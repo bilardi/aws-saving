@@ -1,0 +1,9 @@
+{
+    "StackResourceSummaries": [
+        {
+            "PhysicalResourceId": "ecr",
+            "ResourceType": "AWS::ECR::Repository",
+            "ResourceStatus": "CREATE_COMPLETE"
+        }
+    ]
+}

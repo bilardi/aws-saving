@@ -22,7 +22,7 @@ import boto3
 from botocore.exceptions import ClientError
 from .service import Service
 
-class ECR(Service):
+class Ecr(Service):
     ecr = None
     date_tuple = None
 
@@ -62,6 +62,14 @@ class ECR(Service):
             print('The repository named ' + str(name) + ' not exists')
         return False
 
+    def delete_repository(self, name):
+        """
+        deletes the repository with also its images
+            Args:
+                name (string): the repository name
+        """
+        self.ecr.delete_repository(repositoryName=name, force=True)
+
     def run(self, event):
         """
         runs the schedulation
@@ -83,7 +91,7 @@ class ECR(Service):
                     print('Warning: repository named ' + instance['repositoryName'] + ' is not empty, you have to force for deleting it')
 
 def main(event, context):
-    saving = ECR(event)
+    saving = Ecr(event)
     saving.run(event)
 
 if __name__ == '__main__':

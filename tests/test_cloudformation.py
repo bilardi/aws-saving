@@ -5,9 +5,9 @@ import tests.helper as hlp
 from aws_saving.cloudformation import Cloudformation
 
 class CloudformationClient():
-    resources = ['aurora','bucket','ec2','sagemaker-domain','sagemaker-user-profile']
-    resources_type = ['AWS::RDS::DBCluster','AWS::S3::Bucket','AWS::EC2::Instance','AWS::SageMaker::Domain','AWS::SageMaker::UserProfile']
-    resources_id = ['aurora','bucket','i-01234567890','d-abcdefghijkl','user|d-abcdefghijkl']
+    resources = ['aurora','bucket','ec2','sagemaker-domain','sagemaker-user-profile','ecr']
+    resources_type = ['AWS::RDS::DBCluster','AWS::S3::Bucket','AWS::EC2::Instance','AWS::SageMaker::Domain','AWS::SageMaker::UserProfile','AWS::ECR::Repository']
+    resources_id = ['aurora','bucket','i-01234567890','d-abcdefghijkl','user|d-abcdefghijkl','ecr']
     ds = None
     lsr = {}
     def __init__(self):
@@ -67,6 +67,11 @@ class SagemakerStudio():
         if isinstance(name, str):
             print('Deleting all resources of ' + name)
 
+class Ecr():
+    def delete_repository(self, name):
+        if isinstance(name, str):
+            print('Deleting all resources of ' + name)
+
 class TestService(unittest.TestCase, Cloudformation):
     s = None
 
@@ -75,6 +80,7 @@ class TestService(unittest.TestCase, Cloudformation):
         self.s.stack = CloudformationClient()
         self.s.s3 = S3()
         self.s.rds = Rds()
+        self.s.ecr = Ecr()
         self.s.sagemaker_studio = SagemakerStudio()
         unittest.TestCase.__init__(self, *args, **kwargs)
 
